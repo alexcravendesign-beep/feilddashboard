@@ -408,6 +408,85 @@ class CravenCoolingAPITester:
         
         return self.log_test("User Management", True)
 
+    def test_pm_automation(self):
+        """Test PM Automation endpoints"""
+        # Test PM status
+        success, data, status = self.make_request('GET', 'pm/status')
+        if not success:
+            return self.log_test("PM Automation", False, f"PM status failed: {status}")
+        
+        required_fields = ['overdue', 'due_this_week', 'due_this_month']
+        for field in required_fields:
+            if field not in data:
+                return self.log_test("PM Automation", False, f"Missing field: {field}")
+        
+        # Test generate PM jobs
+        success, data, status = self.make_request('POST', 'pm/generate-jobs')
+        if not success:
+            return self.log_test("PM Automation", False, f"Generate PM jobs failed: {status}")
+        
+        if 'jobs_created' not in data:
+            return self.log_test("PM Automation", False, "Missing jobs_created field")
+        
+        return self.log_test("PM Automation", True)
+
+    def test_customer_portal(self):
+        """Test Customer Portal endpoints"""
+        if not self.created_ids['customers']:
+            return self.log_test("Customer Portal", False, "No customer available")
+        
+        customer_id = self.created_ids['customers'][0]
+        
+        # Test create portal access
+        portal_data = {
+            "customer_id": customer_id,
+            "email": f"portal_test_{uuid.uuid4().hex[:8]}@customer.com",
+            "contact_name": "Portal Test User"
+        }
+        
+        success, data, status = self.make_request('POST', 'portal/create-access', portal_data)
+        if not success:
+            return self.log_test("Customer Portal", False, f"Create access failed: {status}")
+        
+        if 'access_code' not in data:
+            return self.log_test("Customer Portal", False, "Missing access_code field")
+        
+        access_code = data['access_code']
+        
+        # Test portal login
+        login_data = {
+            "email": portal_data["email"],
+            "access_code": access_code
+        }
+        
+        success, login_response, status = self.make_request('POST', 'portal/login', login_data)
+        if not success:
+            return self.log_test("Customer Portal", False, f"Portal login failed: {status}")
+        
+        if 'token' not in login_response:
+            return self.log_test("Customer Portal", False, "Missing token in login response")
+        
+        # Test portal access list
+        success, data, status = self.make_request('GET', 'portal/access-list')
+        if not success or not isinstance(data, list):
+            return self.log_test("Customer Portal", False, "Access list failed")
+        
+        return self.log_test("Customer Portal", True)
+
+    def test_job_photos(self):
+        """Test Job Photos endpoints"""
+        if not self.created_ids['jobs']:
+            return self.log_test("Job Photos", False, "No job available")
+        
+        job_id = self.created_ids['jobs'][0]
+        
+        # Test get job photos (should be empty initially)
+        success, data, status = self.make_request('GET', f'jobs/{job_id}/photos')
+        if not success or not isinstance(data, list):
+            return self.log_test("Job Photos", False, "Get photos failed")
+        
+        return self.log_test("Job Photos", True)
+
     def cleanup_test_data(self):
         """Clean up created test data"""
         print("\n🧹 Cleaning up test data...")
