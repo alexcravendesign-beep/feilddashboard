@@ -29,6 +29,8 @@ import {
   LogOut,
   ChevronRight,
   Smartphone,
+  RefreshCw,
+  Key,
 } from "lucide-react";
 
 const navItems = [
@@ -43,6 +45,8 @@ const navItems = [
   { name: "Reports", path: "/reports", icon: BarChart3 },
   { name: "Parts", path: "/parts", icon: Package },
   { name: "Users", path: "/users", icon: UserCog },
+  { name: "PM Automation", path: "/pm-automation", icon: RefreshCw },
+  { name: "Customer Portal", path: "/portal-access", icon: Key },
 ];
 
 const NavLink = ({ item, isActive, onClick }) => (
