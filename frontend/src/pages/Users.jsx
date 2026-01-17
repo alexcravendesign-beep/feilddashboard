@@ -180,7 +180,7 @@ const Users = () => {
             </div>
           ) : filteredUsers.length === 0 ? (
             <div className="text-center py-12 text-slate-500">
-              <Users className="h-12 w-12 mx-auto mb-3 text-slate-300" />
+              <UsersIcon className="h-12 w-12 mx-auto mb-3 text-slate-300" />
               <p>No users found</p>
             </div>
           ) : (
