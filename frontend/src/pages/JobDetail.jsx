@@ -287,9 +287,10 @@ const JobDetail = () => {
 
           {/* Tabs */}
           <Tabs defaultValue="timeline" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="timeline">Timeline</TabsTrigger>
               <TabsTrigger value="assets">Assets ({assets.length})</TabsTrigger>
+              <TabsTrigger value="photos">Photos ({photos.length})</TabsTrigger>
               <TabsTrigger value="completion">Completion</TabsTrigger>
             </TabsList>
 
