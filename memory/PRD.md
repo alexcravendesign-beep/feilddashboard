@@ -9,6 +9,7 @@ Build a Field Service Management system for refrigeration/HVAC businesses with t
 - **Admin/Owner**: Full system access, manages users, views reports, handles quotes/invoices
 - **Dispatcher/Office**: Schedules jobs, manages customers/sites, creates quotes
 - **Engineer**: Views assigned jobs, completes job sheets, captures signatures, logs parts
+- **Customer (Portal)**: Views service history, upcoming PM schedules, invoices
 
 ## Core Requirements
 - JWT-based authentication with roles
@@ -21,18 +22,18 @@ Build a Field Service Management system for refrigeration/HVAC businesses with t
 - Reports dashboard with charts
 - Mobile-responsive Engineer app with offline-ready design
 
-## What's Been Implemented (January 2025)
-### Backend (FastAPI + MongoDB)
+## What's Been Implemented
+
+### Phase 1 - MVP (January 2025)
+**Backend (FastAPI + MongoDB)**
 - ✅ Complete auth system with JWT tokens and role-based access
 - ✅ Full CRUD for: Customers, Sites, Assets, Jobs, Quotes, Invoices, Parts, Users
 - ✅ Dashboard stats API
 - ✅ Reports APIs (jobs by status, jobs by engineer, PM due list)
 - ✅ PDF generation for Job Reports, Quotes, and Invoices
-- ✅ File upload support for photos
 - ✅ Job completion workflow with signature, checklist, parts tracking
-- ✅ AI summarization endpoint (GPT/Gemini via Emergent LLM key)
 
-### Frontend (React + TailwindCSS + shadcn/ui)
+**Frontend (React + TailwindCSS + shadcn/ui)**
 - ✅ Professional login/register with role selection
 - ✅ Dashboard with stats cards, pending jobs, PM due alerts
 - ✅ Jobs list with filters (status, priority, type)
@@ -45,37 +46,49 @@ Build a Field Service Management system for refrigeration/HVAC businesses with t
 - ✅ Reports with recharts visualizations
 - ✅ Engineer Mobile View with job sheet, checklist, signature capture
 
+### Phase 2 - Enhancements (January 2025)
+- ✅ **Offline Mode**: Service worker for caching, offline.html fallback page
+- ✅ **Photo Upload/Display**: Job photos endpoint, upload in job detail page
+- ✅ **PM Automation**: Auto-generate PM jobs for overdue assets, status dashboard
+- ✅ **Customer Portal**: 
+  - Separate login with access codes
+  - Dashboard with service overview
+  - Sites and Assets views
+  - Service history with engineer notes
+  - Upcoming PM schedule
+  - Invoices list
+
 ## Tech Stack
 - Backend: FastAPI + MongoDB + Motor
 - Frontend: React 19 + TailwindCSS + shadcn/ui
-- Auth: JWT with bcrypt
+- Auth: JWT with bcrypt (separate tokens for staff vs customer portal)
 - PDF: ReportLab
 - Calendar: react-big-calendar
 - Charts: recharts
 - Signature: react-signature-canvas
-- AI: emergentintegrations (GPT-5.2 / Gemini 3 Flash)
+- Offline: Service Worker + IndexedDB ready
 
 ## Prioritized Backlog
-### P0 (Critical)
+### P0 (Critical) - DONE
 - ✅ Core CRUD operations
 - ✅ Job workflow
 - ✅ Basic reporting
+- ✅ PM automation
+- ✅ Customer portal
 
 ### P1 (Important)
-- [ ] Offline mode with service workers
-- [ ] Photo upload to jobs
+- [ ] Background sync for offline job completions
 - [ ] Email notifications for job assignments
-- [ ] PM auto-generation (create PM jobs automatically)
+- [ ] Push notifications for engineers
 
 ### P2 (Nice to have)
 - [ ] Map view for engineer locations
 - [ ] Xero/QuickBooks integration
-- [ ] Customer portal
 - [ ] Mobile push notifications
+- [ ] Service certificates with digital signature verification
 
 ## Next Tasks
-1. Add offline support with service worker and IndexedDB caching
-2. Implement photo upload and display in job completion
-3. Add email notifications using SendGrid/Resend
-4. Create PM automation to auto-generate service jobs when due
-5. Add map view showing engineer locations
+1. Add background sync for offline job completions
+2. Implement email notifications using SendGrid/Resend
+3. Add push notifications for mobile engineers
+4. Create service certificate templates
