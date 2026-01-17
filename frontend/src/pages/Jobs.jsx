@@ -278,14 +278,14 @@ const Jobs = () => {
                 <div className="space-y-2">
                   <Label>Assign Engineer</Label>
                   <Select
-                    value={form.assigned_engineer_id}
-                    onValueChange={(v) => setForm({ ...form, assigned_engineer_id: v })}
+                    value={form.assigned_engineer_id || "unassigned"}
+                    onValueChange={(v) => setForm({ ...form, assigned_engineer_id: v === "unassigned" ? "" : v })}
                   >
                     <SelectTrigger data-testid="job-engineer-select">
                       <SelectValue placeholder="Unassigned" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Unassigned</SelectItem>
+                      <SelectItem value="unassigned">Unassigned</SelectItem>
                       {engineers.map((e) => (
                         <SelectItem key={e.id} value={e.id}>{e.name}</SelectItem>
                       ))}
@@ -363,12 +363,12 @@ const Jobs = () => {
             </div>
             <div className="w-40">
               <Label className="text-xs text-slate-500 mb-1 block">Status</Label>
-              <Select value={filters.status} onValueChange={(v) => handleFilterChange("status", v)}>
+              <Select value={filters.status || "all"} onValueChange={(v) => handleFilterChange("status", v === "all" ? "" : v)}>
                 <SelectTrigger data-testid="filter-status">
                   <SelectValue placeholder="All" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All</SelectItem>
+                  <SelectItem value="all">All</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="in_progress">In Progress</SelectItem>
                   <SelectItem value="completed">Completed</SelectItem>
@@ -377,12 +377,12 @@ const Jobs = () => {
             </div>
             <div className="w-40">
               <Label className="text-xs text-slate-500 mb-1 block">Priority</Label>
-              <Select value={filters.priority} onValueChange={(v) => handleFilterChange("priority", v)}>
+              <Select value={filters.priority || "all"} onValueChange={(v) => handleFilterChange("priority", v === "all" ? "" : v)}>
                 <SelectTrigger data-testid="filter-priority">
                   <SelectValue placeholder="All" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All</SelectItem>
+                  <SelectItem value="all">All</SelectItem>
                   <SelectItem value="urgent">Urgent</SelectItem>
                   <SelectItem value="high">High</SelectItem>
                   <SelectItem value="medium">Medium</SelectItem>
@@ -392,12 +392,12 @@ const Jobs = () => {
             </div>
             <div className="w-40">
               <Label className="text-xs text-slate-500 mb-1 block">Type</Label>
-              <Select value={filters.job_type} onValueChange={(v) => handleFilterChange("job_type", v)}>
+              <Select value={filters.job_type || "all"} onValueChange={(v) => handleFilterChange("job_type", v === "all" ? "" : v)}>
                 <SelectTrigger data-testid="filter-type">
                   <SelectValue placeholder="All" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All</SelectItem>
+                  <SelectItem value="all">All</SelectItem>
                   <SelectItem value="breakdown">Breakdown</SelectItem>
                   <SelectItem value="pm_service">PM Service</SelectItem>
                   <SelectItem value="install">Install</SelectItem>
