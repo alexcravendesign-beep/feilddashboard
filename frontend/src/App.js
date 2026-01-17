@@ -1,53 +1,169 @@
-import { useEffect } from "react";
-import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState, useEffect, createContext, useContext } from "react";
+import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import { Toaster } from "./components/ui/sonner";
+
+// Context
+const AuthContext = createContext(null);
+
+export const useAuth = () => useContext(AuthContext);
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
+// API instance with auth
+const api = axios.create({ baseURL: API });
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
     }
-  };
+    return Promise.reject(error);
+  }
+);
+
+export { api, API };
+
+// Pages - Lazy imports for better loading
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import Jobs from "./pages/Jobs";
+import JobDetail from "./pages/JobDetail";
+import Customers from "./pages/Customers";
+import Sites from "./pages/Sites";
+import Assets from "./pages/Assets";
+import Scheduler from "./pages/Scheduler";
+import Quotes from "./pages/Quotes";
+import Invoices from "./pages/Invoices";
+import Reports from "./pages/Reports";
+import Parts from "./pages/Parts";
+import Users from "./pages/Users";
+import EngineerMobile from "./pages/EngineerMobile";
+import Layout from "./components/Layout";
+
+// Auth Provider
+const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    helloWorldApi();
+    const storedUser = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
+    if (storedUser && token) {
+      setUser(JSON.parse(storedUser));
+    }
+    setLoading(false);
   }, []);
 
+  const login = async (email, password) => {
+    const response = await api.post("/auth/login", { email, password });
+    const { token, user: userData } = response.data;
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(userData));
+    setUser(userData);
+    return userData;
+  };
+
+  const register = async (email, password, name, role) => {
+    const response = await api.post("/auth/register", { email, password, name, role });
+    const { token, user: userData } = response.data;
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(userData));
+    setUser(userData);
+    return userData;
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+  };
+
   return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
+    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+      {children}
+    </AuthContext.Provider>
   );
+};
+
+// Protected Route
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-600"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+};
+
+// Mobile Detection Hook
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return isMobile;
 };
 
 function App() {
   return (
-    <div className="App">
+    <AuthProvider>
       <BrowserRouter>
+        <Toaster position="top-right" richColors />
         <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/engineer" element={
+            <ProtectedRoute>
+              <EngineerMobile />
+            </ProtectedRoute>
+          } />
+          <Route path="/" element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }>
+            <Route index element={<Dashboard />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="jobs" element={<Jobs />} />
+            <Route path="jobs/:id" element={<JobDetail />} />
+            <Route path="customers" element={<Customers />} />
+            <Route path="sites" element={<Sites />} />
+            <Route path="assets" element={<Assets />} />
+            <Route path="scheduler" element={<Scheduler />} />
+            <Route path="quotes" element={<Quotes />} />
+            <Route path="invoices" element={<Invoices />} />
+            <Route path="reports" element={<Reports />} />
+            <Route path="parts" element={<Parts />} />
+            <Route path="users" element={<Users />} />
           </Route>
         </Routes>
       </BrowserRouter>
-    </div>
+    </AuthProvider>
   );
 }
 
