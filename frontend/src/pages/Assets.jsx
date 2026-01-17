@@ -166,12 +166,12 @@ const Assets = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Customer</Label>
-                  <Select value={selectedCustomer} onValueChange={(v) => { setSelectedCustomer(v); setForm({ ...form, site_id: "" }); }}>
+                  <Select value={selectedCustomer || "all"} onValueChange={(v) => { setSelectedCustomer(v === "all" ? "" : v); setForm({ ...form, site_id: "" }); }}>
                     <SelectTrigger>
                       <SelectValue placeholder="Filter by customer" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All</SelectItem>
+                      <SelectItem value="all">All</SelectItem>
                       {customers.map((c) => (
                         <SelectItem key={c.id} value={c.id}>{c.company_name}</SelectItem>
                       ))}

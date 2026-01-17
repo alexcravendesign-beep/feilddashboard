@@ -224,12 +224,12 @@ const JobDetail = () => {
                 </div>
                 <div>
                   <h4 className="text-sm font-medium text-slate-500 mb-1">Assigned Engineer</h4>
-                  <Select value={job.assigned_engineer_id || ""} onValueChange={updateEngineer}>
+                  <Select value={job.assigned_engineer_id || "unassigned"} onValueChange={(v) => updateEngineer(v === "unassigned" ? null : v)}>
                     <SelectTrigger className="w-full" data-testid="engineer-select">
                       <SelectValue placeholder="Unassigned" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Unassigned</SelectItem>
+                      <SelectItem value="unassigned">Unassigned</SelectItem>
                       {engineers.map((e) => (
                         <SelectItem key={e.id} value={e.id}>{e.name}</SelectItem>
                       ))}

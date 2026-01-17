@@ -282,15 +282,12 @@ const Scheduler = () => {
                 <p className="text-sm text-slate-500 flex items-center gap-1 mb-2">
                   <User className="h-3 w-3" /> Assigned Engineer
                 </p>
-                <Select
-                  value={selectedJob.assigned_engineer_id || ""}
-                  onValueChange={(v) => updateJobEngineer(selectedJob.id, v)}
-                >
+                <Select value={selectedJob.assigned_engineer_id || "unassigned"} onValueChange={(v) => updateJobEngineer(selectedJob.id, v === "unassigned" ? null : v)}>
                   <SelectTrigger data-testid="scheduler-engineer-select">
                     <SelectValue placeholder="Unassigned" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Unassigned</SelectItem>
+                    <SelectItem value="unassigned">Unassigned</SelectItem>
                     {engineers.map((e) => (
                       <SelectItem key={e.id} value={e.id}>
                         {e.name}
