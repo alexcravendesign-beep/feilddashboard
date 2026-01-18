@@ -22,7 +22,8 @@ from reportlab.lib.units import inch
 import aiofiles
 
 ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
+PARENT_DIR = ROOT_DIR.parent
+load_dotenv(PARENT_DIR / '.env')
 
 # Supabase connection
 supabase: Client = create_client(
