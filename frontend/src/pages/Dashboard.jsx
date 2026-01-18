@@ -151,7 +151,7 @@ const JobCard = ({ job, customers, sites }) => {
         <div className="flex items-center gap-3">
           <Badge className={priorityColors[job.priority]}>{job.priority}</Badge>
           <Badge variant="outline">{typeLabels[job.job_type] || job.job_type}</Badge>
-          <ArrowRight className="h-4 w-4 text-muted-foreground" />
+          <ArrowRight className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
         </div>
       </div>
     </Link>
@@ -353,8 +353,11 @@ const Dashboard = () => {
                   ))
                 ) : (
                   <div className="text-center py-8 text-muted-foreground">
-                    <Wrench className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                    <Wrench className="h-12 w-12 mx-auto mb-3 opacity-50" aria-hidden="true" />
                     <p>No pending jobs</p>
+                    <Link to="/jobs?action=new" className="text-sm text-primary hover:underline mt-2 inline-block">
+                      Create new job
+                    </Link>
                   </div>
                 )}
               </div>
@@ -385,7 +388,7 @@ const Dashboard = () => {
                     ))
                   ) : (
                     <div className="text-center py-8 text-muted-foreground">
-                      <Thermometer className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                      <Thermometer className="h-12 w-12 mx-auto mb-3 opacity-50" aria-hidden="true" />
                       <p>No PM due</p>
                     </div>
                   )}

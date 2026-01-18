@@ -7,6 +7,35 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import queryClient from "./lib/queryClient";
 import { initSyncManager } from "./lib/syncManager";
 
+// Pages - Lazy imports for better loading
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import Jobs from "./pages/Jobs";
+import JobDetail from "./pages/JobDetail";
+import Customers from "./pages/Customers";
+import Sites from "./pages/Sites";
+import Assets from "./pages/Assets";
+import Scheduler from "./pages/Scheduler";
+import Quotes from "./pages/Quotes";
+import Invoices from "./pages/Invoices";
+import Reports from "./pages/Reports";
+import Parts from "./pages/Parts";
+import Users from "./pages/Users";
+import { EngineerLayout, JobsList, JobSheet } from "./pages/engineer";
+import Layout from "./components/Layout";
+import PMAutomation from "./pages/PMAutomation";
+import PortalAccess from "./pages/PortalAccess";
+import CustomerPortalLogin from "./pages/CustomerPortalLogin";
+import {
+  CustomerPortalLayout,
+  CustomerPortalDashboard,
+  CustomerPortalSites,
+  CustomerPortalAssets,
+  CustomerPortalHistory,
+  CustomerPortalPMSchedule,
+  CustomerPortalInvoices,
+} from "./pages/CustomerPortal";
+
 // Context
 const AuthContext = createContext(null);
 
@@ -52,35 +81,6 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
-
-// Pages - Lazy imports for better loading
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import Jobs from "./pages/Jobs";
-import JobDetail from "./pages/JobDetail";
-import Customers from "./pages/Customers";
-import Sites from "./pages/Sites";
-import Assets from "./pages/Assets";
-import Scheduler from "./pages/Scheduler";
-import Quotes from "./pages/Quotes";
-import Invoices from "./pages/Invoices";
-import Reports from "./pages/Reports";
-import Parts from "./pages/Parts";
-import Users from "./pages/Users";
-import { EngineerLayout, JobsList, JobSheet } from "./pages/engineer";
-import Layout from "./components/Layout";
-import PMAutomation from "./pages/PMAutomation";
-import PortalAccess from "./pages/PortalAccess";
-import CustomerPortalLogin from "./pages/CustomerPortalLogin";
-import {
-  CustomerPortalLayout,
-  CustomerPortalDashboard,
-  CustomerPortalSites,
-  CustomerPortalAssets,
-  CustomerPortalHistory,
-  CustomerPortalPMSchedule,
-  CustomerPortalInvoices,
-} from "./pages/CustomerPortal";
 
 // Auth Provider
 const AuthProvider = ({ children }) => {
@@ -167,6 +167,9 @@ function App() {
       <ThemeProvider defaultTheme="dark" storageKey="craven-theme">
         <AuthProvider>
           <BrowserRouter>
+            <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-primary text-primary-foreground p-3 z-50 rounded-md">
+              Skip to main content
+            </a>
             <Toaster position="top-right" richColors />
             <Routes>
               <Route path="/login" element={<Login />} />

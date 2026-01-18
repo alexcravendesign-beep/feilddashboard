@@ -8,8 +8,9 @@ import { Label } from "../components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../components/ui/tooltip";
 import { toast } from "sonner";
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon, Loader2 } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -58,19 +59,29 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4 relative">
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={toggleTheme}
-        className="absolute top-4 right-4 h-10 w-10 rounded-full"
-        data-testid="login-theme-toggle"
-      >
-        {theme === "dark" ? (
-          <Sun className="h-5 w-5 text-amber-500" />
-        ) : (
-          <Moon className="h-5 w-5 text-slate-700" />
-        )}
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="absolute top-4 right-4 h-10 w-10 rounded-full"
+              data-testid="login-theme-toggle"
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? (
+                <Sun className="h-5 w-5 text-amber-500" />
+              ) : (
+                <Moon className="h-5 w-5 text-slate-700" />
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Toggle theme</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
 
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-8">
@@ -130,6 +141,7 @@ const Login = () => {
                     disabled={isLoading}
                     data-testid="login-submit-btn"
                   >
+                    {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                     {isLoading ? "Signing in..." : "Sign In"}
                   </Button>
                 </form>
@@ -203,6 +215,7 @@ const Login = () => {
                     disabled={isLoading}
                     data-testid="register-submit-btn"
                   >
+                    {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                     {isLoading ? "Creating account..." : "Create Account"}
                   </Button>
                 </form>

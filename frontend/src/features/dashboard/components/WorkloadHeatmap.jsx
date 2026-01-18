@@ -116,7 +116,7 @@ const WorkloadHeatmap = ({ dateRange }) => {
           role="img"
           aria-label="Job workload heatmap showing job density over the past 3 months"
         >
-          <div className="flex gap-6 min-w-fit">
+          <div className="flex gap-6 min-w-fit pl-1">
             {months.map((month) => (
               <div key={month.name} className="flex flex-col gap-1">
                 <span className="text-xs font-medium text-muted-foreground mb-1">

@@ -476,7 +476,7 @@ const Jobs = () => {
                         )}
                       </TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="icon" data-testid={`view-job-${job.id}`}>
+                        <Button variant="ghost" size="icon" data-testid={`view-job-${job.id}`} aria-label={`View job ${job.job_number}`}>
                           <Eye className="h-4 w-4" />
                         </Button>
                       </TableCell>
