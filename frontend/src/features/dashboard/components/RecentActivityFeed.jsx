@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Button } from "../../../components/ui/button";
 import { ScrollArea } from "../../../components/ui/scroll-area";
 import { Skeleton } from "../../../components/ui/skeleton";
 import { api } from "../../../App";
@@ -165,8 +166,11 @@ const RecentActivityFeed = () => {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center h-[300px] text-muted-foreground">
-              <Activity className="h-12 w-12 mb-3 opacity-50" />
-              <p>No recent activity</p>
+              <Activity className="h-12 w-12 mb-3 opacity-50" aria-hidden="true" />
+              <p className="text-sm">No recent activity found</p>
+              <Button variant="link" asChild className="mt-2">
+                 <Link to="/jobs?action=new">Create a Job</Link>
+              </Button>
             </div>
           )}
         </ScrollArea>

@@ -20,8 +20,9 @@ const TrendIndicator = ({ trend, trendValue }) => {
         "flex items-center gap-1 text-xs font-medium",
         isUp ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
       )}
+      aria-label={`Trend is ${isUp ? "up" : "down"}: ${trendValue}`}
     >
-      {isUp ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+      {isUp ? <TrendingUp className="h-3 w-3" aria-hidden="true" /> : <TrendingDown className="h-3 w-3" aria-hidden="true" />}
       <span>{trendValue}</span>
     </div>
   );
