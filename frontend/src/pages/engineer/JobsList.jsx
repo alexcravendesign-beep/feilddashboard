@@ -7,9 +7,10 @@ import JobCard, { JobCardSkeleton } from "./components/JobCard";
 
 export default function JobsList() {
   const navigate = useNavigate();
-  const { data: jobs, isLoading: jobsLoading } = useEngineerJobs();
+  const { data: jobsData, isLoading: jobsLoading } = useEngineerJobs();
   const { data: lookups, isLoading: lookupsLoading } = useEngineerLookups();
 
+  const jobs = Array.isArray(jobsData) ? jobsData : [];
   const isLoading = jobsLoading || lookupsLoading;
 
   const getCustomer = (customerId) => lookups?.customers?.find((c) => c.id === customerId);

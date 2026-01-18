@@ -33,18 +33,18 @@ export function useEngineerJobs() {
     queryFn: async () => {
       if (!navigator.onLine) {
         const offlineData = await getOfflineData();
-        return offlineData.jobs;
+        return offlineData.jobs || [];
       }
       
       const response = await api.get('/jobs/my-jobs');
-      await db.jobs.bulkPut(response.data);
-      return response.data;
+      const jobs = Array.isArray(response.data) ? response.data : [];
+      if (jobs.length > 0) {
+        await db.jobs.bulkPut(jobs);
+      }
+      return jobs;
     },
     staleTime: 1000 * 60 * 2,
-    placeholderData: async () => {
-      const offlineData = await getOfflineData();
-      return offlineData.jobs;
-    },
+    placeholderData: [],
   });
 }
 
@@ -64,19 +64,17 @@ export function useEngineerLookups() {
       ]);
       
       const data = {
-        customers: customersRes.data,
-        sites: sitesRes.data,
-        assets: assetsRes.data,
-        parts: partsRes.data,
+        customers: Array.isArray(customersRes.data) ? customersRes.data : [],
+        sites: Array.isArray(sitesRes.data) ? sitesRes.data : [],
+        assets: Array.isArray(assetsRes.data) ? assetsRes.data : [],
+        parts: Array.isArray(partsRes.data) ? partsRes.data : [],
       };
       
       await seedDatabase(data);
       return data;
     },
     staleTime: 1000 * 60 * 10,
-    placeholderData: async () => {
-      return getOfflineData();
-    },
+    placeholderData: { customers: [], sites: [], assets: [], parts: [] },
   });
 }
 
