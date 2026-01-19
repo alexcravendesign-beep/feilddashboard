@@ -124,7 +124,15 @@ CREATE TABLE IF NOT EXISTS assets (
     last_service_date VARCHAR,
     next_pm_due VARCHAR,
     notes TEXT DEFAULT '',
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    -- F-Gas compliance fields
+    fgas_category VARCHAR DEFAULT '',
+    fgas_co2_equivalent DECIMAL(10,2),
+    fgas_certified_technician VARCHAR DEFAULT '',
+    fgas_leak_check_interval INTEGER DEFAULT 12,
+    fgas_last_leak_check VARCHAR,
+    fgas_next_leak_check_due VARCHAR,
+    fgas_notes TEXT DEFAULT ''
 );
 
 -- Jobs table
@@ -263,6 +271,23 @@ CREATE TABLE IF NOT EXISTS customer_portal (
     active BOOLEAN DEFAULT TRUE
 );
 
+-- F-Gas Logs table (tracks all F-Gas related activities for compliance)
+CREATE TABLE IF NOT EXISTS fgas_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    asset_id UUID REFERENCES assets(id) ON DELETE CASCADE,
+    job_id UUID REFERENCES jobs(id) ON DELETE CASCADE,
+    log_type VARCHAR NOT NULL,
+    refrigerant_added DECIMAL(10,3),
+    refrigerant_recovered DECIMAL(10,3),
+    refrigerant_lost DECIMAL(10,3),
+    technician_certification VARCHAR DEFAULT '',
+    leak_test_result VARCHAR DEFAULT '',
+    test_pressure DECIMAL(10,2),
+    test_method VARCHAR DEFAULT '',
+    notes TEXT DEFAULT '',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Create indexes for better query performance
 CREATE INDEX IF NOT EXISTS idx_sites_customer_id ON sites(customer_id);
 CREATE INDEX IF NOT EXISTS idx_assets_site_id ON assets(site_id);
@@ -280,3 +305,6 @@ CREATE INDEX IF NOT EXISTS idx_invoices_status ON invoices(status);
 CREATE INDEX IF NOT EXISTS idx_job_photos_job_id ON job_photos(job_id);
 CREATE INDEX IF NOT EXISTS idx_customer_portal_customer_id ON customer_portal(customer_id);
 CREATE INDEX IF NOT EXISTS idx_customer_portal_email ON customer_portal(email);
+CREATE INDEX IF NOT EXISTS idx_fgas_logs_asset_id ON fgas_logs(asset_id);
+CREATE INDEX IF NOT EXISTS idx_fgas_logs_job_id ON fgas_logs(job_id);
+CREATE INDEX IF NOT EXISTS idx_assets_fgas_next_leak_check_due ON assets(fgas_next_leak_check_due);
