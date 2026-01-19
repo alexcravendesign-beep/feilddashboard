@@ -25,6 +25,7 @@ import { EngineerLayout, JobsList, JobSheet } from "./pages/engineer";
 import Layout from "./components/Layout";
 import PMAutomation from "./pages/PMAutomation";
 import PortalAccess from "./pages/PortalAccess";
+import Help from "./pages/Help";
 import CustomerPortalLogin from "./pages/CustomerPortalLogin";
 import {
   CustomerPortalLayout,
@@ -217,6 +218,7 @@ function App() {
                 <Route path="users" element={<Users />} />
                 <Route path="pm-automation" element={<PMAutomation />} />
                 <Route path="portal-access" element={<PortalAccess />} />
+                <Route path="help" element={<Help />} />
               </Route>
             </Routes>
           </BrowserRouter>
