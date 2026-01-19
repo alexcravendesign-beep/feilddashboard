@@ -112,7 +112,7 @@ export const CustomerPortalLayout = () => {
             <div className="absolute left-0 top-0 bottom-0 w-64 bg-slate-900 p-4">
               <div className="flex items-center justify-between mb-6">
                 <img
-                  src="https://customer-assets.emergentagent.com/job_coolflow-1/artifacts/jqw8kykt_craven-logo-DmU1mTeU.png"
+                  src="/craven-logo.png"
                   alt="Craven"
                   className="h-8 w-8"
                 />
@@ -145,7 +145,7 @@ export const CustomerPortalLayout = () => {
         <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-slate-900">
           <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-800">
             <img
-              src="https://customer-assets.emergentagent.com/job_coolflow-1/artifacts/jqw8kykt_craven-logo-DmU1mTeU.png"
+              src="/craven-logo.png"
               alt="Craven"
               className="h-10 w-10"
             />
