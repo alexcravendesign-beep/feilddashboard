@@ -34,6 +34,7 @@ import {
   CustomerPortalHistory,
   CustomerPortalPMSchedule,
   CustomerPortalInvoices,
+  CustomerPortalApprovals,
 } from "./pages/CustomerPortal";
 
 // Context
@@ -178,12 +179,13 @@ function App() {
               <Route path="/portal" element={<CustomerPortalLogin />} />
               <Route path="/portal/*" element={<CustomerPortalLayout />}>
                 <Route path="dashboard" element={<CustomerPortalDashboard />} />
-                <Route path="sites" element={<CustomerPortalSites />} />
-                <Route path="assets" element={<CustomerPortalAssets />} />
-                <Route path="history" element={<CustomerPortalHistory />} />
-                <Route path="pm-schedule" element={<CustomerPortalPMSchedule />} />
-                <Route path="invoices" element={<CustomerPortalInvoices />} />
-              </Route>
+                              <Route path="sites" element={<CustomerPortalSites />} />
+                              <Route path="assets" element={<CustomerPortalAssets />} />
+                              <Route path="history" element={<CustomerPortalHistory />} />
+                              <Route path="pm-schedule" element={<CustomerPortalPMSchedule />} />
+                              <Route path="invoices" element={<CustomerPortalInvoices />} />
+                              <Route path="approvals" element={<CustomerPortalApprovals />} />
+                            </Route>
               
               {/* Engineer Mobile App */}
               <Route path="/engineer" element={
