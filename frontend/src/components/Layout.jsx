@@ -34,6 +34,7 @@ import {
   Key,
   Sun,
   Moon,
+  HelpCircle,
 } from "lucide-react";
 
 const navItems = [
@@ -50,6 +51,7 @@ const navItems = [
   { name: "Users", path: "/users", icon: UserCog },
   { name: "PM Automation", path: "/pm-automation", icon: RefreshCw },
   { name: "Customer Portal", path: "/portal-access", icon: Key },
+  { name: "Help", path: "/help", icon: HelpCircle },
 ];
 
 const NavLink = ({ item, isActive, onClick }) => (
