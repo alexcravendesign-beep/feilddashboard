@@ -2,12 +2,32 @@ from fastapi import APIRouter, HTTPException, Depends
 from typing import List, Optional
 from pydantic import BaseModel
 import uuid
+import logging
 from datetime import datetime, timezone, timedelta
+from postgrest.exceptions import APIError
 
 from database import supabase
 from services.auth import get_current_user
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/locations", tags=["locations"])
+
+TABLE_NAME = "engineer_locations"
+TABLE_MISSING_MSG = (
+    "The engineer_locations table has not been created yet. "
+    "Please run the migration in supabase/migrations/20260222235800_add_engineer_locations.sql "
+    "against your Supabase database."
+)
+
+
+def _handle_db_error(e: Exception):
+    """Check if error is due to missing table and raise appropriate HTTP error."""
+    error_str = str(e)
+    if "PGRST205" in error_str or "could not find" in error_str.lower():
+        logger.error("engineer_locations table not found: %s", e)
+        raise HTTPException(status_code=503, detail=TABLE_MISSING_MSG)
+    logger.error("Database error in locations: %s", e)
+    raise HTTPException(status_code=500, detail="Database error occurred")
 
 
 class LocationPoint(BaseModel):
@@ -44,7 +64,11 @@ async def track_location(data: LocationBatch, user: dict = Depends(get_current_u
             "synced_at": now,
         })
 
-    supabase.table("engineer_locations").insert(docs).execute()
+    try:
+        supabase.table(TABLE_NAME).insert(docs).execute()
+    except APIError as e:
+        _handle_db_error(e)
+
     return {"message": "Locations stored", "count": len(docs)}
 
 
@@ -63,7 +87,11 @@ async def track_single_location(data: LocationPoint, user: dict = Depends(get_cu
         "recorded_at": data.recorded_at or now,
         "synced_at": now,
     }
-    supabase.table("engineer_locations").insert(doc).execute()
+    try:
+        supabase.table(TABLE_NAME).insert(doc).execute()
+    except APIError as e:
+        _handle_db_error(e)
+
     return {"message": "Location stored", "id": doc["id"]}
 
 
@@ -72,15 +100,17 @@ async def get_active_engineer_locations(user: dict = Depends(get_current_user)):
     """Get the latest location for all engineers who have reported in the last 2 hours."""
     cutoff = (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat()
 
-    # Get all engineers with recent locations
-    response = (
-        supabase.table("engineer_locations")
-        .select("*")
-        .gte("recorded_at", cutoff)
-        .order("recorded_at", desc=True)
-        .limit(500)
-        .execute()
-    )
+    try:
+        response = (
+            supabase.table(TABLE_NAME)
+            .select("*")
+            .gte("recorded_at", cutoff)
+            .order("recorded_at", desc=True)
+            .limit(500)
+            .execute()
+        )
+    except APIError as e:
+        _handle_db_error(e)
 
     # Group by engineer_id and pick the latest for each
     latest_by_engineer = {}
@@ -129,15 +159,18 @@ async def get_engineer_location_history(
     """Get location history for a specific engineer within the given time range."""
     cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
 
-    response = (
-        supabase.table("engineer_locations")
-        .select("*")
-        .eq("engineer_id", engineer_id)
-        .gte("recorded_at", cutoff)
-        .order("recorded_at", desc=False)
-        .limit(1000)
-        .execute()
-    )
+    try:
+        response = (
+            supabase.table(TABLE_NAME)
+            .select("*")
+            .eq("engineer_id", engineer_id)
+            .gte("recorded_at", cutoff)
+            .order("recorded_at", desc=False)
+            .limit(1000)
+            .execute()
+        )
+    except APIError as e:
+        _handle_db_error(e)
 
     return response.data
 
@@ -148,14 +181,17 @@ async def get_engineer_latest_location(
     user: dict = Depends(get_current_user),
 ):
     """Get the most recent location for a specific engineer."""
-    response = (
-        supabase.table("engineer_locations")
-        .select("*")
-        .eq("engineer_id", engineer_id)
-        .order("recorded_at", desc=True)
-        .limit(1)
-        .execute()
-    )
+    try:
+        response = (
+            supabase.table(TABLE_NAME)
+            .select("*")
+            .eq("engineer_id", engineer_id)
+            .order("recorded_at", desc=True)
+            .limit(1)
+            .execute()
+        )
+    except APIError as e:
+        _handle_db_error(e)
 
     if not response.data:
         raise HTTPException(status_code=404, detail="No location data found")
