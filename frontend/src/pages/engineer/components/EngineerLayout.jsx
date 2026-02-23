@@ -1,7 +1,9 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../../App";
 import { Button } from "../../../components/ui/button";
-import { useOnlineStatus } from "../../../lib/hooks/useEngineerData";
+import { useOnlineStatus, useEngineerJobs } from "../../../lib/hooks/useEngineerData";
+import { useLocationTracking, useLocationConsent } from "../../../lib/hooks/useLocationTracking";
+import LocationConsentDialog from "../../../components/LocationConsentDialog";
 import {
   Wrench,
   Home,
@@ -9,6 +11,7 @@ import {
   LogOut,
   WifiOff,
   Download,
+  MapPin,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -19,6 +22,23 @@ export default function EngineerLayout() {
   const isOnline = useOnlineStatus();
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+  const [showLocationConsent, setShowLocationConsent] = useState(false);
+
+  // Location tracking
+  const { data: jobsData } = useEngineerJobs();
+  const jobs = Array.isArray(jobsData) ? jobsData : [];
+  const locationConsent = useLocationConsent();
+  const { isTracking, hasActiveWork } = useLocationTracking(
+    jobs,
+    locationConsent.isGranted
+  );
+
+  // Show location consent dialog when engineer first has active work
+  useEffect(() => {
+    if (hasActiveWork && locationConsent.isPending) {
+      setShowLocationConsent(true);
+    }
+  }, [hasActiveWork, locationConsent.isPending]);
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e) => {
@@ -97,15 +117,23 @@ export default function EngineerLayout() {
               <p className="text-xs text-slate-400">{user?.name}</p>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleLogout}
-            className="text-slate-400 hover:text-white"
-            data-testid="logout-mobile-btn"
-          >
-            <LogOut className="h-5 w-5" />
-          </Button>
+          <div className="flex items-center gap-2">
+            {isTracking && (
+              <div className="flex items-center gap-1 px-2 py-1 bg-emerald-600/20 rounded-full" title="Location tracking active">
+                <MapPin className="h-3.5 w-3.5 text-emerald-400 animate-pulse" />
+                <span className="text-xs text-emerald-400">Live</span>
+              </div>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleLogout}
+              className="text-slate-400 hover:text-white"
+              data-testid="logout-mobile-btn"
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -141,6 +169,19 @@ export default function EngineerLayout() {
           </Button>
         </div>
       </nav>
+
+      {/* Location Consent Dialog */}
+      <LocationConsentDialog
+        open={showLocationConsent}
+        onConsent={() => {
+          locationConsent.grantConsent();
+          setShowLocationConsent(false);
+        }}
+        onDecline={() => {
+          locationConsent.revokeConsent();
+          setShowLocationConsent(false);
+        }}
+      />
     </div>
   );
 }

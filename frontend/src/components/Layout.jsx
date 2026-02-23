@@ -36,6 +36,7 @@ import {
   Moon,
   HelpCircle,
   Snowflake,
+  Navigation,
 } from "lucide-react";
 
 const navItems = [
@@ -51,6 +52,7 @@ const navItems = [
   { name: "Reports", path: "/reports", icon: BarChart3 },
   { name: "Parts", path: "/parts", icon: Package },
   { name: "Users", path: "/users", icon: UserCog },
+  { name: "Engineer Map", path: "/engineer-map", icon: Navigation },
   { name: "PM Automation", path: "/pm-automation", icon: RefreshCw },
   { name: "Customer Portal", path: "/portal-access", icon: Key },
   { name: "Help", path: "/help", icon: HelpCircle },

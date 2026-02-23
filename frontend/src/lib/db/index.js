@@ -12,6 +12,17 @@ db.version(1).stores({
   jobDrafts: 'jobId, engineerNotes, travelTime, timeOnSite, checklistItems, partsUsed, photos, lastUpdated',
 });
 
+db.version(2).stores({
+  jobs: 'id, job_number, customer_id, site_id, status, scheduled_date, assigned_engineer_id',
+  customers: 'id, company_name',
+  sites: 'id, customer_id, name',
+  assets: 'id, site_id, name',
+  parts: 'id, name, part_number',
+  mutationQueue: '++id, type, jobId, timestamp, status, payload',
+  jobDrafts: 'jobId, engineerNotes, travelTime, timeOnSite, checklistItems, partsUsed, photos, lastUpdated',
+  locationQueue: '++id, latitude, longitude, accuracy, jobId, status, recordedAt, synced',
+});
+
 export const MUTATION_STATUS = {
   PENDING: 'pending',
   IN_PROGRESS: 'in_progress',
@@ -99,6 +110,26 @@ export async function deleteJobDraft(jobId) {
 
 export async function updateLocalJob(jobId, updates) {
   return db.jobs.update(jobId, updates);
+}
+
+// Location queue helpers for offline location tracking
+export async function addToLocationQueue(locationData) {
+  return db.locationQueue.add({
+    ...locationData,
+    synced: 0,
+  });
+}
+
+export async function getUnsyncedLocations() {
+  return db.locationQueue.where('synced').equals(0).toArray();
+}
+
+export async function markLocationsSynced(ids) {
+  return db.locationQueue.bulkDelete(ids);
+}
+
+export async function clearLocationQueue() {
+  return db.locationQueue.clear();
 }
 
 export default db;
