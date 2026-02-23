@@ -4,6 +4,8 @@ import {
   getPendingMutations, 
   updateMutationStatus, 
   removeMutation,
+  getUnsyncedLocations,
+  markLocationsSynced,
   MUTATION_STATUS,
   MUTATION_TYPES,
 } from './db';
@@ -65,15 +67,18 @@ export function initSyncManager() {
   window.addEventListener('online', () => {
     toast.info('Back online - syncing changes...');
     processMutationQueue();
+    syncLocationQueue();
   });
   
   if (navigator.onLine) {
     processMutationQueue();
+    syncLocationQueue();
   }
   
   setInterval(() => {
     if (navigator.onLine) {
       processMutationQueue();
+      syncLocationQueue();
     }
   }, 30000);
 }
@@ -86,6 +91,31 @@ export async function requestBackgroundSync() {
     } catch (error) {
       console.warn('Background sync not available:', error);
     }
+  }
+}
+
+export async function syncLocationQueue() {
+  if (!navigator.onLine) return;
+
+  try {
+    const unsyncedLocations = await getUnsyncedLocations();
+    if (unsyncedLocations.length === 0) return;
+
+    const locationPayload = unsyncedLocations.map((loc) => ({
+      latitude: loc.latitude,
+      longitude: loc.longitude,
+      accuracy: loc.accuracy,
+      job_id: loc.jobId || null,
+      status: loc.status || 'travelling',
+      recorded_at: loc.recordedAt,
+    }));
+
+    await api.post('/locations/track', { locations: locationPayload });
+
+    const ids = unsyncedLocations.map((loc) => loc.id);
+    await markLocationsSynced(ids);
+  } catch (error) {
+    console.warn('Failed to sync location queue:', error);
   }
 }
 

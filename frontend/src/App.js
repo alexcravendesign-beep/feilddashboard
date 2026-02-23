@@ -27,6 +27,7 @@ import PMAutomation from "./pages/PMAutomation";
 import PortalAccess from "./pages/PortalAccess";
 import Help from "./pages/Help";
 import FGasCompliance from "./pages/FGasCompliance";
+import EngineerMap from "./pages/EngineerMap";
 import CustomerPortalLogin from "./pages/CustomerPortalLogin";
 import {
   CustomerPortalLayout,
@@ -197,6 +198,7 @@ function App() {
                 <Route path="pm-automation" element={<PMAutomation />} />
                 <Route path="portal-access" element={<PortalAccess />} />
                 <Route path="fgas-compliance" element={<FGasCompliance />} />
+                <Route path="engineer-map" element={<EngineerMap />} />
                 <Route path="help" element={<Help />} />
               </Route>
             </Routes>

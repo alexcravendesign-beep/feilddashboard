@@ -11,6 +11,7 @@ from routes.reports import router as reports_router
 from routes.pm import router as pm_router
 from routes.portal import router as portal_router
 from routes.fgas import router as fgas_router
+from routes.locations import router as locations_router
 
 __all__ = [
     "auth_router", "users_router",
@@ -26,4 +27,5 @@ __all__ = [
     "pm_router",
     "portal_router",
     "fgas_router",
+    "locations_router",
 ]
